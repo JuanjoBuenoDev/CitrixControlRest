@@ -88,10 +88,6 @@ public class MainFrame extends JFrame {
                     try {
                         get();
                         refreshAllPanels();
-                        JOptionPane.showMessageDialog(MainFrame.this,
-                                "Datos actualizados correctamente.",
-                                "Éxito",
-                                JOptionPane.INFORMATION_MESSAGE);
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(MainFrame.this,
                                 "Error al actualizar: " + ex.getCause().getMessage(),

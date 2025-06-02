@@ -21,6 +21,8 @@ public class ToastNotifier {
 //        }
     }
 
+    private static final java.util.List<JWindow> activeToasts = new java.util.ArrayList<>();
+
     private static void showToastVisual(String message, ToastType type, int durationMillis) {
         SwingUtilities.invokeLater(() -> {
             JWindow toast = new JWindow();
@@ -43,9 +45,16 @@ public class ToastNotifier {
             Rectangle screenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
                     .getDefaultScreenDevice().getDefaultConfiguration().getBounds();
 
-            int x = screenBounds.x + screenBounds.width - toast.getWidth() - 30;
-            int y = screenBounds.y + screenBounds.height - toast.getHeight() - 50;
-            toast.setLocation(x, y);
+            int baseX = screenBounds.x + screenBounds.width - toast.getWidth() - 30;
+
+            int verticalOffset;
+            synchronized (activeToasts) {
+                verticalOffset = activeToasts.size() * (toast.getHeight() + 10);
+                activeToasts.add(toast);
+            }
+
+            int y = screenBounds.y + screenBounds.height - toast.getHeight() - 50 - verticalOffset;
+            toast.setLocation(baseX, y);
 
             toast.setAlwaysOnTop(true);
             toast.setVisible(true);
@@ -63,6 +72,11 @@ public class ToastNotifier {
                         toast.setVisible(false);
                         toast.dispose();
                         fadeTimer.stop();
+
+                        synchronized (activeToasts) {
+                            activeToasts.remove(toast);
+                            repositionToasts();
+                        }
                     } else {
                         toast.setOpacity(opacity[0]);
                     }
@@ -72,6 +86,25 @@ public class ToastNotifier {
             fadeTimer.start();
         });
     }
+
+    private static void repositionToasts() {
+        Rectangle screenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getDefaultScreenDevice().getDefaultConfiguration().getBounds();
+
+        int baseX, baseY;
+        synchronized (activeToasts) {
+            int index = 0;
+            for (JWindow toast : activeToasts) {
+                int height = toast.getHeight();
+                baseX = screenBounds.x + screenBounds.width - toast.getWidth() - 30;
+                baseY = screenBounds.y + screenBounds.height - height - 50 - (index * (height + 10));
+                toast.setLocation(baseX, baseY);
+                index++;
+            }
+        }
+    }
+
+
 
 
     private static Color getBackgroundColor(ToastType type) {
@@ -129,4 +162,3 @@ public class ToastNotifier {
         }
     }
 }
-

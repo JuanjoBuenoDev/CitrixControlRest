@@ -27,6 +27,7 @@ public class CitrixControlRestApplication {
             try {
                 // Crear UI principal
                 MainFrame mainFrame = new MainFrame(citrixService);
+                System.out.println("Nueva instancia");
 
                 // Registrar paneles
                 mainFrame.addPanel("SITE", new SitePanel(citrixService));
