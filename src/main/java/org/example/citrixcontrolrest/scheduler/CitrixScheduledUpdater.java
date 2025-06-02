@@ -1,11 +1,11 @@
 package org.example.citrixcontrolrest.scheduler;
 
 import org.example.citrixcontrolrest.model.DDCDTO;
-import org.example.citrixcontrolrest.service.CitrixService;
 import org.example.citrixcontrolrest.utils.ToastNotifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.*;
@@ -25,6 +25,7 @@ public class CitrixScheduledUpdater {
     private UpdateListener updateListener;
     private volatile List<DDCDTO> ddcList;
     private final ToastNotifier toastNotifier;
+
 
     // Funciones para realizar las actualizaciones (inyectadas desde el servicio)
     private Function<String, Void> refreshDGsFunction;

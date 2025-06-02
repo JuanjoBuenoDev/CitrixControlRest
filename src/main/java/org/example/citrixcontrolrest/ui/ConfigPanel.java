@@ -1,8 +1,6 @@
 package org.example.citrixcontrolrest.ui;
 
 import lombok.SneakyThrows;
-import org.example.citrixcontrolrest.controller.NavigationController;
-import org.example.citrixcontrolrest.model.CitrixSiteDTO;
 import org.example.citrixcontrolrest.model.Config;
 import org.example.citrixcontrolrest.service.CitrixService;
 import org.example.citrixcontrolrest.utils.LoadingDialog;
@@ -35,14 +33,12 @@ public class ConfigPanel extends JPanel {
 
     private final CitrixService citrixService;
     private final MainFrame mainFrame;
-    private final NavigationController navigationController;
     private final Serializar serializar = new Serializar();
     private List<Config> sites;
 
-    public ConfigPanel(CitrixService citrixService, MainFrame mainFrame, NavigationController navigationController) {
+    public ConfigPanel(CitrixService citrixService, MainFrame mainFrame) {
         this.citrixService = citrixService;
         this.mainFrame = mainFrame;
-        this.navigationController = navigationController;
         initUI();
     }
 
@@ -429,7 +425,7 @@ public class ConfigPanel extends JPanel {
                     }
 
                     citrixService.refreshCitrixSite(ddcs.get(0));
-                    citrixService.iniciarScheduler();
+                    citrixService.reiniciarScheduler();
 
                     return true;
                 } catch (IOException | InterruptedException ex) {
@@ -461,9 +457,11 @@ public class ConfigPanel extends JPanel {
                                 "DDCs actualizados correctamente.",
                                 "Éxito",
                                 JOptionPane.INFORMATION_MESSAGE);
+                        // ✅ ACTUALIZAR LOS PANELES
+                        mainFrame.refreshAllPanels();
 
                         // Cambiar pantalla solo si todo fue OK
-                        navigationController.showPanel("SITE");
+                        mainFrame.showPanel("SITE");
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();

@@ -38,6 +38,35 @@ public class CitrixService {
         this.updater.setRefreshDDCsFunction(this::refreshDDCsWrapper);
     }
 
+    public void reiniciarScheduler() {
+        stopScheduler();  // Siempre detener antes
+        Map<String, DDCDTO> disponibles = getDdcs();
+
+        List<DDCDTO> ddcsActivos = disponibles.values().stream()
+                .filter(ddc -> ddc != null && "Active".equalsIgnoreCase(ddc.getState()))
+                .collect(Collectors.toList());
+
+        if (ddcsActivos.isEmpty()) {
+            throw new IllegalStateException("No hay DDCs activos en el contexto para iniciar el scheduler.");
+        }
+
+        updater.setDdcList(ddcsActivos);
+        updater.start();  // Siempre iniciar
+    }
+
+    private void iniciarScheduler() {
+        // Ya no se expone externamente
+        if (!updater.isRunning()) {
+            updater.start();
+        }
+    }
+
+    public void stopScheduler() {
+        if (updater.isRunning()) {
+            updater.stop();
+        }
+    }
+
     // Wrappers para las funciones de actualización
     private Void refreshDGsWrapper(String ddc) {
         try {
@@ -207,29 +236,5 @@ public class CitrixService {
 
     public CitrixSiteDTO getCitrixSite() {
         return citrixContext.getCitrixSite();
-    }
-
-    public void iniciarScheduler() {
-        Map<String, DDCDTO> disponibles = getDdcs();
-
-        List<DDCDTO> ddcsActivos = disponibles.values().stream()
-                .filter(ddc -> ddc != null && "Active".equalsIgnoreCase(ddc.getState()))
-                .collect(Collectors.toList());
-
-        if (ddcsActivos.isEmpty()) {
-            throw new IllegalStateException("No hay DDCs activos en el contexto para iniciar el scheduler.");
-        }
-
-        updater.setDdcList(ddcsActivos);
-
-        if (!updater.isRunning()) {
-            updater.start();
-        }
-    }
-
-    public void stopScheduler() {
-        if (updater.isRunning()) {
-            updater.stop();
-        }
     }
 }

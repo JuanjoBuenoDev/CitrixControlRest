@@ -13,5 +13,4 @@ public class DDCDTO {
 
     @JsonProperty("desktopsRegistered")
     private int desktopsRegistered;
-
 }
