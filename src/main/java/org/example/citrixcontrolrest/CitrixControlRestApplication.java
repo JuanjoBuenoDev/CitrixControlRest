@@ -31,10 +31,10 @@ public class CitrixControlRestApplication {
 
                 // Registrar paneles
                 mainFrame.addPanel("SITE", new SitePanel(citrixService));
-                mainFrame.addPanel("DGs", new DGPanel());
-                mainFrame.addPanel("VDAs", new VDAPanel());
-                mainFrame.addPanel("APPs", new APPPanel());
-                mainFrame.addPanel("Active Users", new UserPanel());
+                mainFrame.addPanel("DGs", new DGPanel(citrixService));
+                mainFrame.addPanel("VDAs", new VDAPanel(citrixService));
+                mainFrame.addPanel("APPs", new APPPanel(citrixService));
+                mainFrame.addPanel("Active Users", new UserPanel(citrixService));
                 mainFrame.addPanel("CONFIG", new ConfigPanel(citrixService, mainFrame));
 
                 // Mostrar pantalla inicial

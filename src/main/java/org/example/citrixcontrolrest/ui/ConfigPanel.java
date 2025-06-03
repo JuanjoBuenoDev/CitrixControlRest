@@ -426,6 +426,7 @@ public class ConfigPanel extends JPanel {
 
                     citrixService.refreshCitrixSite(ddcs.get(0));
                     citrixService.reiniciarScheduler();
+                    mainFrame.startAutoRefresh();
 
                     return true;
                 } catch (IOException | InterruptedException ex) {

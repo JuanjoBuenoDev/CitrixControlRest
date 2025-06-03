@@ -9,10 +9,15 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainFrame extends JFrame {
 
     private final CitrixService citrixService;
+    private ScheduledExecutorService scheduler;
+
 
     private final CardLayout cardLayout;
     private final JPanel mainPanel;
@@ -29,6 +34,16 @@ public class MainFrame extends JFrame {
         this.citrixService = citrixService;
         this.cardLayout = new CardLayout();
         this.mainPanel = new JPanel(cardLayout);
+
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                stopAutoRefresh();
+                super.windowClosing(e);
+            }
+        });
+
+
 
         FlatLightLaf.install();
         Color lightBlue = new Color(173, 216, 230);
@@ -71,6 +86,25 @@ public class MainFrame extends JFrame {
 
         initListeners();
     }
+
+    public void startAutoRefresh() {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> {
+            SwingUtilities.invokeLater(() -> {
+                if (refreshButton.isEnabled() && this.isVisible()) {
+                    refreshButton.doClick();
+                }
+            });
+        }, 0, 1, TimeUnit.MINUTES);
+    }
+
+    public void stopAutoRefresh() {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdown();
+        }
+    }
+
+
 
     private void initListeners() {
         refreshButton.addActionListener(e -> {
