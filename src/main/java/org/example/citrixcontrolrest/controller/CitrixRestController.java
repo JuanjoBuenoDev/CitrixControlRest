@@ -3,12 +3,14 @@ package org.example.citrixcontrolrest.controller;
 // CitrixRestController.java
 import org.example.citrixcontrolrest.model.*;
 import org.example.citrixcontrolrest.service.CitrixService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/citrix")
 public class CitrixRestController {
