@@ -1,8 +1,6 @@
 package org.example.citrixcontrolrest.utils;
 
-import org.example.citrixcontrolrest.model.CitrixSiteDTO;
 import org.example.citrixcontrolrest.model.Config;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;

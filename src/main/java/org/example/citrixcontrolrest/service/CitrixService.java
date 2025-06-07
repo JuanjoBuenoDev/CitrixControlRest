@@ -1,12 +1,14 @@
 package org.example.citrixcontrolrest.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.example.citrixcontrolrest.context.CitrixContext;
 import org.example.citrixcontrolrest.model.*;
 import org.example.citrixcontrolrest.powershell.PowerShellExecutor;
 import org.example.citrixcontrolrest.scheduler.CitrixScheduledUpdater;
+import org.example.citrixcontrolrest.websocket.WebSocketSender;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,13 +23,17 @@ public class CitrixService {
 
     private final CitrixContext citrixContext;
     private final PowerShellExecutor powerShellExecutor;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
     private final CitrixScheduledUpdater updater;
+    private final WebSocketSender webSocketSender;
 
-    public CitrixService(CitrixContext citrixContext, PowerShellExecutor powerShellExecutor, CitrixScheduledUpdater updater) {
+
+    public CitrixService(CitrixContext citrixContext, PowerShellExecutor powerShellExecutor, ObjectMapper objectMapper, CitrixScheduledUpdater updater, WebSocketSender webSocketSender) {
         this.powerShellExecutor = powerShellExecutor;
         this.citrixContext = citrixContext;
+        this.objectMapper = objectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
         this.updater = updater;
+        this.webSocketSender = webSocketSender;
 
         // Configurar las funciones de actualización
         this.updater.setRefreshDGsFunction(this::refreshDGsWrapper);
@@ -142,6 +148,7 @@ public class CitrixService {
         boolean validate = ddcs.stream().noneMatch(d -> "Error".equals(d.getState()));
         if (validate) {
             citrixContext.updateDDCs(ddcs);
+            webSocketSender.sendUpdateToClients(jsonOutput);
         }
         return validate;
     }
@@ -156,6 +163,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<DDCDTO>>() {}
         );
         citrixContext.updateDDCs(ddcs);
+        webSocketSender.sendUpdateToClients(jsonOutput);
     }
 
     public void refreshDGs(String ddc) throws IOException, InterruptedException {
@@ -167,6 +175,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<DgDTO>>() {}
         );
         citrixContext.updateDeliveryGroups(dgs);
+        webSocketSender.sendUpdateToClients(jsonOutput);
     }
 
     public void refreshActiveUsers(String ddc) throws IOException, InterruptedException {
@@ -178,6 +187,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<UserDTO>>() {}
         );
         citrixContext.updateActiveUsers(usuarios);
+        webSocketSender.sendUpdateToClients(jsonOutput);
     }
 
     public void refreshVDAs(String ddc) throws IOException, InterruptedException {
@@ -189,6 +199,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<VdaDTO>>() {}
         );
         citrixContext.updateVDAs(vdas);
+        webSocketSender.sendUpdateToClients(jsonOutput);
     }
 
     public void refreshApps(String ddc) throws IOException, InterruptedException {
@@ -200,6 +211,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<AppDTO>>() {}
         );
         citrixContext.updateApps(apps);
+        webSocketSender.sendUpdateToClients(jsonOutput);
     }
 
     public void refreshCitrixSite(String ddc) throws IOException, InterruptedException {
@@ -207,6 +219,7 @@ public class CitrixService {
 
         CitrixSiteDTO newSite = objectMapper.readValue(jsonOutput, CitrixSiteDTO.class);
         citrixContext.updateCitrixSite(newSite);
+        webSocketSender.sendUpdateToClients(jsonOutput);
     }
 
     // Métodos para leer la info del contexto y devolverla

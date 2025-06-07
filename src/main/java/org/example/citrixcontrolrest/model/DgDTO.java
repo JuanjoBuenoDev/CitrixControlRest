@@ -1,6 +1,7 @@
 package org.example.citrixcontrolrest.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Data;
@@ -8,6 +9,20 @@ import lombok.Data;
 import java.util.List;
 
 @Data
+@JsonPropertyOrder({
+        "uid",
+        "name",
+        "state",
+        "sessionCount",
+        "vdas",
+        "averageLoadIndex",
+        "isMaintenanceMode",
+        "rebootEnabled",
+        "rebootFrequency",
+        "rebootDaysOfWeek",
+        "rebootStartTime",
+        "rebootDuration"
+})
 public class DgDTO {
 
     @JsonProperty("uid")

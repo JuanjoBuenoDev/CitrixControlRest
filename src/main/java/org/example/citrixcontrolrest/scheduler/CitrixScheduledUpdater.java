@@ -2,6 +2,7 @@ package org.example.citrixcontrolrest.scheduler;
 
 import org.example.citrixcontrolrest.model.DDCDTO;
 import org.example.citrixcontrolrest.utils.ToastNotifier;
+import org.example.citrixcontrolrest.websocket.WebSocketSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,8 @@ public class CitrixScheduledUpdater {
     private UpdateListener updateListener;
     private volatile List<DDCDTO> ddcList;
     private final ToastNotifier toastNotifier;
+    private WebSocketSender webSocketSender;
+
 
 
     // Funciones para realizar las actualizaciones (inyectadas desde el servicio)
@@ -169,6 +172,10 @@ public class CitrixScheduledUpdater {
             if (updateListener != null) {
                 updateListener.onUpdateFinished(success);
             }
+        }
+        if (webSocketSender != null) {
+            String jsonMessage = "{\"type\": \"refreshStatus\", \"success\": " + success + "}";
+            webSocketSender.sendUpdateToClients(jsonMessage);
         }
 
         return success;

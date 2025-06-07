@@ -3,11 +3,30 @@ package org.example.citrixcontrolrest.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Data;
 
 @Data
+@JsonPropertyOrder({
+        "machineName",
+        "catalogName",
+        "registrationState",
+        "powerState",
+        "inMaintenanceMode",
+        "loadIndex",
+        "agentVersion",
+        "desktopGroupName",
+        "osType",
+        "deliveryType",
+        "ipAddress",
+        "isPhysical",
+        "lastRegistrationTime",
+        "persistUserChanges",
+        "sessionsEstablished",
+        "applications"
+})
 public class VdaDTO {
 
     @JsonProperty("machineName")
