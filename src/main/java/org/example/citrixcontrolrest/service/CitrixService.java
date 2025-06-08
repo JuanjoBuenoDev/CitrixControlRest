@@ -148,7 +148,7 @@ public class CitrixService {
         boolean validate = ddcs.stream().noneMatch(d -> "Error".equals(d.getState()));
         if (validate) {
             citrixContext.updateDDCs(ddcs);
-            webSocketSender.sendUpdateToClients(jsonOutput);
+            webSocketSender.sendUpdate("ddc", ddcs);
         }
         return validate;
     }
@@ -163,8 +163,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<DDCDTO>>() {}
         );
         citrixContext.updateDDCs(ddcs);
-        webSocketSender.sendUpdateToClients(jsonOutput);
-    }
+        webSocketSender.sendUpdate("ddc", ddcs);    }
 
     public void refreshDGs(String ddc) throws IOException, InterruptedException {
         String jsonOutput = powerShellExecutor.getDGStatus(ddc);
@@ -175,8 +174,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<DgDTO>>() {}
         );
         citrixContext.updateDeliveryGroups(dgs);
-        webSocketSender.sendUpdateToClients(jsonOutput);
-    }
+        webSocketSender.sendUpdate("dg", dgs);    }
 
     public void refreshActiveUsers(String ddc) throws IOException, InterruptedException {
         String jsonOutput = powerShellExecutor.getActiveUserStatus(ddc);
@@ -187,7 +185,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<UserDTO>>() {}
         );
         citrixContext.updateActiveUsers(usuarios);
-        webSocketSender.sendUpdateToClients(jsonOutput);
+        webSocketSender.sendUpdate("user", usuarios);
     }
 
     public void refreshVDAs(String ddc) throws IOException, InterruptedException {
@@ -199,7 +197,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<VdaDTO>>() {}
         );
         citrixContext.updateVDAs(vdas);
-        webSocketSender.sendUpdateToClients(jsonOutput);
+        webSocketSender.sendUpdate("vda", vdas);
     }
 
     public void refreshApps(String ddc) throws IOException, InterruptedException {
@@ -211,7 +209,7 @@ public class CitrixService {
                 jsonOutput, new TypeReference<List<AppDTO>>() {}
         );
         citrixContext.updateApps(apps);
-        webSocketSender.sendUpdateToClients(jsonOutput);
+        webSocketSender.sendUpdate("app", apps);
     }
 
     public void refreshCitrixSite(String ddc) throws IOException, InterruptedException {
@@ -219,7 +217,7 @@ public class CitrixService {
 
         CitrixSiteDTO newSite = objectMapper.readValue(jsonOutput, CitrixSiteDTO.class);
         citrixContext.updateCitrixSite(newSite);
-        webSocketSender.sendUpdateToClients(jsonOutput);
+        webSocketSender.sendUpdate("site", newSite);
     }
 
     // Métodos para leer la info del contexto y devolverla
